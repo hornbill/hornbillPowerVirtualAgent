@@ -28,6 +28,7 @@ Write-Host ""
 # Instance Details
 $InstanceID = Read-Host "The ID of your Hornbill instance"
 $APIKey = Read-Host "The API key for your Teams PVA account on your Hornbill instance"
+$UserUPN = Read-Host "The field in your Hornbill instance user records that holds the UPN (userId / employeeId / loginId / attrib1 / ... / attrib8)"
 
 #Topic - I Need Help
 try {
@@ -123,6 +124,10 @@ try {
     # Set API Key
     $ComponentJSON.dialogs[0].actionNodes | % {if($_.id -eq '066b5977-290d-4f31-a2ea-1669c9b86c24'){$_.inputParameterVariableIdMap.text=$APIKey}}
     $ComponentJSON.actionDefinitions | % {if($_.id -eq 'd1e5b56e-a0b6-4f6d-8cb6-5f82fca116d3'){$_.bodyContent='{"text":"'+$APIKey+'"}'}}
+
+    # Set User Field
+    $ComponentJSON.dialogs[0].actionNodes | % {if($_.id -eq '335ce7a6-aa07-469d-acf0-f83fa38f9b71'){$_.inputParameterVariableIdMap.text=$UserUPN}}
+    $ComponentJSON.actionDefinitions | % {if($_.id -eq '0a1c5383-19d9-4b43-a3a9-3935958c4d2f'){$_.bodyContent='{"text":"'+$UserUPN+'"}'}}
     
     # Write JSON back to file
     $ComponentJSON | ConvertTo-Json -depth 32| set-content $FilePath
@@ -144,7 +149,10 @@ try {
     $ComponentJSON.dialogs[0].actionNodes | % {if($_.id -eq '5c595a37-3ea4-4cc9-bfb3-4424d4cbf104'){$_.inputParameterVariableIdMap.number=$IssueServiceID}}
     
     # Set Catalog Item ID
-    $ComponentJSON.dialogs[0].actionNodes | % {if($_.id -eq '3a1c8753-82e9-4a13-b8a9-8ff7a53a3a4e'){$_.inputParameterVariableIdMap.number=$IssueCatalogItemID}}
+    $ComponentJSON.dialogs[0].actionNodes | % {if($_.id -eq '3a1c8753-82e9-4a13-b8a9-8ff7a53a3a4e'){
+        $_.inputParameterVariableIdMap.number=$IssueCatalogItemID
+        $_
+        }}
     
     # Write JSON back to file
     $ComponentJSON | ConvertTo-Json -depth 32| set-content $FilePath
