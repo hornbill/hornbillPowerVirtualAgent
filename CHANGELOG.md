@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.2.1.0 (March 15th, 2023)
+
+Changes:
+
+- Updated the Hornbill-GetUserDetails cloud flow to support the recent Hornbill API hardening
 ## 1.2.0.0 (August 1st, 2022)
 
 Changes:
@@ -19,7 +24,7 @@ Changes:
 
 Features:
 
-- Added the ability to specify which column in Hornbill holds the O365 UPN for account matching
+- Added the ability to specify which column in Hornbill holds the O365 UPN for the account matching
 - Improved performance of topic conversations
 - Reduced the number of Power Automate flow executions required per conversation
 
