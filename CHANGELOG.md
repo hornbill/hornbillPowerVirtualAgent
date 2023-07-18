@@ -1,5 +1,14 @@
 # CHANGELOG
 
+# 1.2.2.0 (July 18th, 2023)
+
+Changes:
+
+- Fixed case sensitivity issues in the following flows:
+  - Hornbill - Search Knowledge - FAQs
+  - Hornbill - Search Knowledge
+  - Hornbill - Add Timeline Update To Request
+
 ## 1.2.1.0 (March 15th, 2023)
 
 Changes:
