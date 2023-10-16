@@ -1,6 +1,16 @@
 # CHANGELOG
 
-# 1.2.2.0 (July 18th, 2023)
+## 1.3.0.0 (October 16th, 2023)
+
+**Changes**
+- New topics & supporting cloud flow
+  - Bulletins - returns news in the form of bulletins from the users subscribed services
+  - Cancel Request - allows users to cancel in-flow requests
+
+**Fixes**
+- Fixed data type issues when making calls to Hornbill API
+
+## 1.2.2.0 (July 18th, 2023)
 
 Changes:
 
@@ -9,7 +19,7 @@ Changes:
   - Hornbill - Search Knowledge
   - Hornbill - Add Timeline Update To Request
 
-## 1.2.1.0 (March 15th, 2023)
+## 1.2.1.0 (March 15th, 2023)
 
 Changes:
 

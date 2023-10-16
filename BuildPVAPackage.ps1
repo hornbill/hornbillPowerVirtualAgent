@@ -11,7 +11,7 @@
 Write-Host "** Hornbill Power Automate Solution Build Tool **"
 Write-Host "`nPreparing content, please wait..."
 Remove-Item PVAContent -Recurse -ErrorAction Ignore
-Expand-Archive -Path HornbillPVASolution.Zip -DestinationPath PVAContent
+Expand-Archive -Path HornbillPVASolution.Zip -DestinationPath PVAContent -Force
 
 [xml]$SolutionXML = Get-Content -Path 'PVAContent/solution.xml'
 $PVAUniqueName = $SolutionXML.ImportExportXml.SolutionManifest.UniqueName
@@ -103,6 +103,44 @@ if ("yes" -eq $PasswordResetEnabled.ToLower()) {
         Exit
     }
 } elseif ("no" -eq $PasswordResetEnabled.ToLower()) {
+    # Do nothing
+} else {
+    Write-Error "Value needs to be yes or no"
+    Exit
+}
+
+# Topic - Bulletins
+Write-Host "`nTopic - Bulletins:"
+$BulletinsEnabled = Read-Host "Enabled (yes/no)"
+[Bool]$BulletinsEnabledBool = $False
+if ("yes" -eq $BulletinsEnabled.ToLower()) {
+    # New Starter Topic Enable
+    try {
+        $BulletinsEnabledBool = $True
+    } catch {
+        Write-Error $_.Exception.Message
+        Exit
+    }
+} elseif ("no" -eq $BulletinsEnabled.ToLower()) {
+    # Do nothing
+} else {
+    Write-Error "Value needs to be yes or no"
+    Exit
+}
+
+# Topic - Cancel Request
+Write-Host "`nTopic - Cancel Request:"
+$CancelRequestEnabled = Read-Host "Enabled (yes/no)"
+[Bool]$CancelRequestEnabledBool = $False
+if ("yes" -eq $CancelRequestEnabled.ToLower()) {
+    # New Starter Topic Enable
+    try {
+        $CancelRequestEnabledBool = $True
+    } catch {
+        Write-Error $_.Exception.Message
+        Exit
+    }
+} elseif ("no" -eq $CancelRequestEnabled.ToLower()) {
     # Do nothing
 } else {
     Write-Error "Value needs to be yes or no"
@@ -243,6 +281,48 @@ if ($True -eq $PasswordResetEnabledBool) {
     Write-Output "Completed Topic - Password Reset"
 }
 
+## Process Topic - Bulletins
+if ($True -eq $BulletinsEnabledBool) {
+    Write-Output "`nProcessing Topic - Bulletins..."
+    $TopicUID = "new_topic_e0eba14fadb04fcfba0d37374b597734"
+    $FilePath = "PVAContent/botcomponents/$($TopicUID)/content.json"
+    try {
+        # Read JSON from file
+        $ComponentJSON = Get-Content $FilePath -raw | ConvertFrom-Json
+
+        # Enable Bulletins Topic Trigger
+        $ComponentJSON.intents | % {if($_.id -eq $TopicUID){$_.isTriggeringEnabled=$True}}
+        
+        # Write JSON back to file
+        $ComponentJSON | ConvertTo-Json -depth 32| set-content $FilePath
+    } catch {
+        Write-Error "Error processing Topic - Bulletins: $($_.Exception.Message)"
+        Exit
+    }
+    Write-Output "Completed Topic - Bulletins"
+}
+
+## Process Topic - Cancen Request
+if ($True -eq $CancelRequestEnabledBool) {
+    Write-Output "`nProcessing Topic - Cancel Request..."
+    $TopicUID = "new_topic_48aae397c3f04c959ac71fb0fe387919"
+    $FilePath = "PVAContent/botcomponents/$($TopicUID)/content.json"
+    try {
+        # Read JSON from file
+        $ComponentJSON = Get-Content $FilePath -raw | ConvertFrom-Json
+
+        # Enable Cancel Request Topic Trigger
+        $ComponentJSON.intents | % {if($_.id -eq $TopicUID){$_.isTriggeringEnabled=$True}}
+        
+        # Write JSON back to file
+        $ComponentJSON | ConvertTo-Json -depth 32| set-content $FilePath
+    } catch {
+        Write-Error "Error processing Topic - Cancel Request: $($_.Exception.Message)"
+        Exit
+    }
+    Write-Output "Completed Topic - Cancel Request"
+}
+
 ## Zip the package up
 Write-Output "`nBuilding Solution, please wait..."
 $SolutionPackageFile = "$($PVAUniqueName)_v$($PVAVersionUS).zip"
@@ -250,7 +330,7 @@ Get-ChildItem -Path "PVAContent/" | Compress-Archive -DestinationPath $SolutionP
 
 ## Delete the WIP folder & content
 Write-Output "Cleaning up folder, please wait..."
-Remove-Item PVAContent -Recurse
+Remove-Item PVAContent -Recurse -ErrorAction silent -WarningAction silent
 
 Write-Output "`n"
 Write-Output "* Instance ID: $($InstanceID)"
